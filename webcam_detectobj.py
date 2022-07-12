@@ -1,6 +1,8 @@
 import cv2
+import time
 import numpy as np
 from matplotlib import pyplot as plt
+
 
 imcap = cv2.VideoCapture(0)
 imcap.set(3, 640)  # set width as 640
@@ -16,17 +18,25 @@ while True:
     # setting threshold of gray image
     # _, threshold = cv2.threshold(blurred, 0, 255, cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
 
+    # input image, output thresh value, adaptive thresholding method, thresholding method, area value, constant c for finetuning
+    # threshold = cv2.adaptiveThreshold(blurred, 255,
+    #                                   cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 21, 10)
     threshold = cv2.adaptiveThreshold(blurred, 255,
-                                      cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 21, 10)
+                                      cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 21, 6)
+
     cv2.imshow('threshold', threshold)
 
     # using a findContours() function
+    # contours, _ = cv2.findContours(
+    #     threshold, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
     contours, _ = cv2.findContours(
         threshold, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
     i = 0
 
     # list for storing names of shapes
+    # print(contours)
     for contour in contours:
 
         # here we are ignoring first counter because
@@ -71,6 +81,9 @@ while True:
 
     # displaying the image after drawing contours
     cv2.imshow('shapes', img)
+
+    #wait for a few seconds
+    time.sleep(0.2)
 
     # loop will be broken when 'q' is pressed on the keyboard
     if cv2.waitKey(10) & 0xFF == ord('q'):
