@@ -3,7 +3,6 @@ import time
 import numpy as np
 from matplotlib import pyplot as plt
 
-
 imcap = cv2.VideoCapture(0)
 imcap.set(3, 640)  # set width as 640
 imcap.set(4, 480)  # set height as 480
@@ -45,9 +44,12 @@ while True:
             i = 1
             continue
 
+        arc = cv2.arcLength(contour, True)
+        if arc < 110:
+            continue
+
         # cv2.approxPloyDP() function to approximate the shape
-        approx = cv2.approxPolyDP(
-            contour, 0.01 * cv2.arcLength(contour, True), True)
+        approx = cv2.approxPolyDP(contour, 0.04 * arc, True)
 
         # using drawContours() function
         cv2.drawContours(img, [contour], 0, (0, 0, 255), 5)
@@ -64,16 +66,16 @@ while True:
                         cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
 
         elif len(approx) == 4:
-            cv2.putText(img, 'Quadrilateral', (x, y),
+            cv2.putText(img, 'Rectangle', (x, y),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
 
-        elif len(approx) == 5:
-            cv2.putText(img, 'Pentagon', (x, y),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
-
-        elif len(approx) == 6:
-            cv2.putText(img, 'Hexagon', (x, y),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
+        # elif len(approx) == 5:
+        #     cv2.putText(img, 'Pentagon', (x, y),
+        #                 cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
+        #
+        # elif len(approx) == 6:
+        #     cv2.putText(img, 'Hexagon', (x, y),
+        #                 cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
 
         else:
             cv2.putText(img, 'circle', (x, y),
@@ -82,7 +84,7 @@ while True:
     # displaying the image after drawing contours
     cv2.imshow('shapes', img)
 
-    #wait for a few seconds
+    # wait for a few seconds
     time.sleep(0.2)
 
     # loop will be broken when 'q' is pressed on the keyboard
