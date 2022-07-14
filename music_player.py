@@ -50,7 +50,8 @@ available_ports = midiout.get_ports()
 print(available_ports)
 
 if available_ports:
-    midiout.open_port(1)
+    # midiout.open_port(1)
+    midiout.open_port(0)
 else:
     midiout.open_virtual_port("My virtual output")
 
@@ -66,15 +67,24 @@ def calc_time(arc_length):
 
 
 def replace_shapes(*newshapes):
-    shapes = [['circle', 150]]
+    these_shapes = []
+    i = 0
     for shape in newshapes:
-        shapes.append(shape)
+        if i == 0:
+            i = 1
+            continue
+
+        these_shapes.append(shape)
+
+    global shapes
+    shapes = these_shapes
+    print('new shapes' + str(shapes))
 
 
 async def play_shapes():
     with midiout:
         while True:
-            print(shapes)
+            global shapes
             for shape in shapes:
                 print('playing shape')
                 name = shape[0]
@@ -110,7 +120,7 @@ async def play_shapes():
                 else:
                     play_note(NOTE_C1, 0.5)
 
-                await asyncio.sleep(0)
+            await asyncio.sleep(0)
 
 
 async def init_main():
