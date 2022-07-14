@@ -81,15 +81,15 @@ if __name__ == "__main__":
             # putting shape name at center of each shape
             if len(approx) == 3:
                 cv2.putText(img, 'triangle', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
-                shapes.append('triangle')
+                shapes.append(['triangle', arc])
 
             elif len(approx) == 4:
                 cv2.putText(img, 'rectangle', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
-                shapes.append('rectangle')
+                shapes.append(['rectangle', arc])
 
             else:
                 cv2.putText(img, 'circle', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
-                shapes.append('circle')
+                shapes.append(['circle', arc])
 
         client.send_message('/shapes', shapes)
 
