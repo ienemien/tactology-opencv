@@ -120,7 +120,7 @@ if __name__ == "__main__":
         cv2.imshow('shapes', img)
 
         # wait a bit
-        time.sleep(0.2)
+        time.sleep(0.5)
 
         # loop will be broken when 'q' is pressed on the keyboard
         if cv2.waitKey(10) & 0xFF == ord('q'):

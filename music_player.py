@@ -15,16 +15,11 @@ CC = 0XB0
 
 # note numbers
 NOTE_C1 = 33
-NOTE_CS1 = 35
 NOTE_D1 = 37
-NOTE_DS1 = 39
 NOTE_E1 = 41
 NOTE_F1 = 44
-NOTE_FS1 = 46
 NOTE_G1 = 49
-NOTE_GS1 = 52
 NOTE_A1 = 55
-NOTE_AS1 = 58
 NOTE_B1 = 62
 
 # CC messages
@@ -43,15 +38,15 @@ GATE_TIME = 49
 
 # array of shapes and arc lengths
 shapes = [['rectangle', 133], ['rectangle', 180], ['circle', 200], ['triangle', 144], ['circle', 12.45]]
-rgb = [10, 200, 500]
+rgb = [10, 300, 7564]
 
 midiout = rtmidi.MidiOut()
 available_ports = midiout.get_ports()
 print(available_ports)
 
 if available_ports:
-    # midiout.open_port(1)
-    midiout.open_port(0)
+    midiout.open_port(1)
+    # midiout.open_port(0)
 else:
     midiout.open_virtual_port("My virtual output")
 
@@ -64,6 +59,12 @@ def play_note(note, length):
 
 def calc_time(arc_length):
     return np.interp(arc_length, [120, 1000], [0.1, 0.4])
+
+
+def calc_ccval(rgb_val):
+    ccval_double = np.interp(rgb_val, [0, 30000], [10, 127])
+    ccval = round(ccval_double)
+    return ccval
 
 
 def replace_shapes(*newshapes):
@@ -110,11 +111,15 @@ async def play_shapes():
 
                 # convert rgb values to CC messages
                 global rgb
-                # print(str(rgb))
-
-                midiout.send_message([CC, EXPRESSION, np.interp(rgb[0], [0, 8000], [0, 127])])
-                midiout.send_message([CC, LFO_RATE, np.interp(rgb[1], [0, 8000], [0, 127])])
-                midiout.send_message([CC, LFO_INT, np.interp(rgb[2], [0, 8000], [0, 127])])
+                expr = calc_ccval(rgb[0])
+                print('expression ' + str(expr))
+                midiout.send_message([CC, EXPRESSION, expr])
+                lfo_rate = calc_ccval(rgb[1])
+                print('lfo rate ' + str(lfo_rate))
+                midiout.send_message([CC, LFO_RATE, lfo_rate])
+                lfo_int = calc_ccval(rgb[2])
+                print('lfo int ' + str(lfo_int))
+                midiout.send_message([CC, LFO_INT, lfo_int])
 
                 if name == 'circle':
                     midiout.send_message([CC, SLIDE_TIME, 127])
@@ -145,7 +150,7 @@ async def play_shapes():
                 else:
                     play_note(NOTE_C1, 0.5)
 
-            await asyncio.sleep(0)
+                await asyncio.sleep(0)
 
 
 async def init_main():
