@@ -63,7 +63,7 @@ if __name__ == "__main__":
                 continue
 
             arc = cv2.arcLength(contour, True)
-            if arc < 120:
+            if arc < 130:
                 continue
 
             # cv2.approxPloyDP() function to approximate the shape
@@ -112,12 +112,14 @@ if __name__ == "__main__":
         cv2.putText(img, 'blue: ' + str(bluecount), (20, 80), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 0, 0), 2)
 
         # send rgb values to the music player
-        client.send_message('/rgb', [red_count, greencount, bluecount])
+        new_rgb = [red_count, greencount, bluecount]
+        print("sending rgb vals: " + str(new_rgb))
+        client.send_message('/rgb', new_rgb)
 
         # displaying the image after drawing contours
         cv2.imshow('shapes', img)
 
-        # wait for a few seconds
+        # wait a bit
         time.sleep(0.2)
 
         # loop will be broken when 'q' is pressed on the keyboard
