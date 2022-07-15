@@ -63,7 +63,7 @@ def play_note(note, length):
 
 
 def calc_time(arc_length):
-    return np.interp(arc_length, [100, 500], [0.1, 0.5])
+    return np.interp(arc_length, [120, 1000], [0.1, 0.4])
 
 
 def replace_shapes(*newshapes):
@@ -81,6 +81,22 @@ def replace_shapes(*newshapes):
     print('new shapes' + str(shapes))
 
 
+def replace_rgb(*rgbvals):
+    temp_rgb = []
+
+    i = 0
+    for val in rgbvals:
+        if i == 0:
+            i = 1
+            continue
+
+        temp_rgb.append(val)
+
+    global rgb
+    rgb = temp_rgb
+    print("new rgb vals: " + str(rgb))
+
+
 async def play_shapes():
     with midiout:
         while True:
@@ -91,6 +107,15 @@ async def play_shapes():
                 arc = shape[1]
                 print(name)
                 print(arc)
+
+                # convert rgb values to CC messages
+                global rgb
+                # print(str(rgb))
+
+                midiout.send_message([CC, EXPRESSION, np.interp(rgb[0], [0, 8000], [0, 127])])
+                midiout.send_message([CC, LFO_RATE, np.interp(rgb[1], [0, 8000], [0, 127])])
+                midiout.send_message([CC, LFO_INT, np.interp(rgb[2], [0, 8000], [0, 127])])
+
                 if name == 'circle':
                     midiout.send_message([CC, SLIDE_TIME, 127])
                     play_note(NOTE_C1, calc_time(arc))
@@ -132,7 +157,7 @@ async def init_main():
 
     dispatcher = Dispatcher()
     dispatcher.map("/shapes", replace_shapes)
-    dispatcher.map("/rgb", print)
+    dispatcher.map("/rgb", replace_rgb)
     server = AsyncIOOSCUDPServer((args.ip, args.port), dispatcher, asyncio.get_event_loop())
     transport, protocol = await server.create_serve_endpoint()  # Create datagram endpoint and start serving
 
