@@ -58,7 +58,7 @@ def play_note(note, length):
 
 
 def calc_time(arc_length):
-    return np.interp(arc_length, [120, 1000], [0.1, 0.4])
+    return np.interp(arc_length, [500, 1000], [0.1, 0.4])
 
 
 def calc_ccval(rgb_val):
@@ -78,8 +78,10 @@ def replace_shapes(*newshapes):
         these_shapes.append(shape)
 
     global shapes
-    shapes = these_shapes
-    print('new shapes' + str(shapes))
+
+    if len(these_shapes) > 0:
+        shapes = these_shapes
+        print('new shapes' + str(shapes))
 
 
 def replace_rgb(*rgbvals):
@@ -114,28 +116,29 @@ async def play_shapes():
                 expr = calc_ccval(rgb[0])
                 print('expression ' + str(expr))
                 midiout.send_message([CC, EXPRESSION, expr])
-                lfo_rate = calc_ccval(rgb[1])
-                print('lfo rate ' + str(lfo_rate))
-                midiout.send_message([CC, LFO_RATE, lfo_rate])
-                lfo_int = calc_ccval(rgb[2])
-                print('lfo int ' + str(lfo_int))
-                midiout.send_message([CC, LFO_INT, lfo_int])
+                attack = calc_ccval(rgb[1])
+                print('attack ' + str(attack))
+                midiout.send_message([CC, EG_ATTACK, attack])
+                cutoff = calc_ccval(rgb[2])
+                print('cutoff ' + str(cutoff))
+                midiout.send_message([CC, CUTOFF_EG_INT, cutoff])
 
                 if name == 'circle':
                     midiout.send_message([CC, SLIDE_TIME, 127])
-                    play_note(NOTE_C1, calc_time(arc))
-                    play_note(NOTE_D1, calc_time(arc))
-                    play_note(NOTE_E1, calc_time(arc))
-                    play_note(NOTE_F1, calc_time(arc))
-                    play_note(NOTE_G1, calc_time(arc))
-                    play_note(NOTE_A1, calc_time(arc))
-                    play_note(NOTE_B1, calc_time(arc))
-                    play_note(NOTE_A1, calc_time(arc))
-                    play_note(NOTE_G1, calc_time(arc))
-                    play_note(NOTE_F1, calc_time(arc))
-                    play_note(NOTE_E1, calc_time(arc))
-                    play_note(NOTE_D1, calc_time(arc))
-                    play_note(NOTE_C1, calc_time(arc))
+                    div = 5
+                    play_note(NOTE_C1, calc_time(arc) / div)
+                    play_note(NOTE_D1, calc_time(arc) / div)
+                    play_note(NOTE_E1, calc_time(arc) / div)
+                    play_note(NOTE_F1, calc_time(arc) / div)
+                    play_note(NOTE_G1, calc_time(arc) / div)
+                    play_note(NOTE_A1, calc_time(arc) / div)
+                    play_note(NOTE_B1, calc_time(arc) / div)
+                    play_note(NOTE_A1, calc_time(arc) / div)
+                    play_note(NOTE_G1, calc_time(arc) / div)
+                    play_note(NOTE_F1, calc_time(arc) / div)
+                    play_note(NOTE_E1, calc_time(arc) / div)
+                    play_note(NOTE_D1, calc_time(arc) / div)
+                    play_note(NOTE_C1, calc_time(arc) / div)
                 elif name == 'rectangle':
                     midiout.send_message([CC, SLIDE_TIME, 0])
                     play_note(NOTE_C1, calc_time(arc))

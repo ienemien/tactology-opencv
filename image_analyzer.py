@@ -63,7 +63,7 @@ if __name__ == "__main__":
                 continue
 
             arc = cv2.arcLength(contour, True)
-            if arc < 130:
+            if arc < 500:
                 continue
 
             # cv2.approxPloyDP() function to approximate the shape
@@ -91,6 +91,7 @@ if __name__ == "__main__":
                 cv2.putText(img, 'circle', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
                 shapes.append(['circle', arc])
 
+        print('sending shapes: ' + str(shapes))
         client.send_message('/shapes', shapes)
 
         # 1: detect colors
@@ -120,7 +121,7 @@ if __name__ == "__main__":
         cv2.imshow('shapes', img)
 
         # wait a bit
-        time.sleep(0.5)
+        time.sleep(0.3)
 
         # loop will be broken when 'q' is pressed on the keyboard
         if cv2.waitKey(10) & 0xFF == ord('q'):
